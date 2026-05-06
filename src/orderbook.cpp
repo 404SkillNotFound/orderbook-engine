@@ -22,3 +22,23 @@ void OrderBook::printBook()
         std::cout << key << "--" << value.size() << " orders\n";
     }
 }
+void OrderBook::matchOrder()
+{
+    if (bids.empty() || asks.empty())
+    {
+        std::cout << "Sorry! We do not have enough number of orders to match yor up, try again later.\n";
+        return;
+    }
+    auto bestBid = bids.begin();        // first key-value pair of bids
+    double priceOfBid = bestBid->first; // first key of bids entry
+    auto bestAsk = asks.begin();
+    double priceOfAsk = bestAsk->first;
+    if (priceOfBid >= priceOfAsk) // Bid = Buyer, Ask = Seller
+    {
+        std::cout << "Trade Possible.\n";
+    }
+    else
+    {
+        std::cout << "Trade not possible.\n";
+    }
+}
