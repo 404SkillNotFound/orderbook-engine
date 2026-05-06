@@ -19,7 +19,7 @@ void OrderBook::printBook()
 
     for (const auto &[key, value] : asks)
     {
-        std::cout << key << "--" << value.size() << " orders\n";
+        std::cout << key << " -- " << value.size() << " orders\n";
     }
 }
 void OrderBook::matchOrder()
