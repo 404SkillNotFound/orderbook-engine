@@ -22,7 +22,8 @@ public:
         }
         else
         {
-            std::cout << "Kindly choose 'B' or 'S'\n";
+            std::cout << "Kindly choose from 'B' or 'S'\n";
         }
     }
+    void printBook();
 };
