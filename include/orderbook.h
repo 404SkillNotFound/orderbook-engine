@@ -27,4 +27,5 @@ public:
     }
     void printBook();
     void matchOrder();
+    void cancelOrder(int orderId);
 };

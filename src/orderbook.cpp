@@ -80,3 +80,18 @@ void OrderBook::matchOrder()
 
     printBook();
 }
+
+void OrderBook::cancelOrder(int orderId)
+{
+
+    for (auto &[price, orders] : bids)
+    {
+        for (auto &Order : orders)
+        {
+            if (orderId == Order.id)
+            {
+                continue;
+            }
+        }
+    }
+}
