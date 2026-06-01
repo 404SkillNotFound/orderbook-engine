@@ -83,15 +83,24 @@ void OrderBook::matchOrder()
 
 void OrderBook::cancelOrder(int orderId)
 {
-
     for (auto &[price, orders] : bids)
     {
-        for (auto &Order : orders)
+        for (auto it = orders.begin(); it != orders.end(); ++it)
         {
-            if (orderId == Order.id)
+            if (it->id == orderId)
             {
-                continue;
+                orders.erase(it);
+
+                if (orders.empty())
+                {
+                    bids.erase(price);
+                }
+
+                std::cout << "Cancelled order " << orderId << "\n";
+                return;
             }
         }
     }
+
+    std::cout << "Order " << orderId << " not found\n";
 }
