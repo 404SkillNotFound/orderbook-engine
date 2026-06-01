@@ -22,11 +22,13 @@ void OrderBook::printBook()
         std::cout << key << " -- " << value.size() << " orders\n";
     }
 }
+
 void OrderBook::matchOrder()
 {
     if (bids.empty() || asks.empty())
     {
-        std::cout << "Sorry! We do not have enough number of orders to match you up, try again later.\n";
+        // Disable during synthetic testing to avoid excessive console output
+        // std::cout << "Sorry! We do not have enough number of orders to match you up, try again later.\n";
         return;
     }
 
@@ -40,7 +42,8 @@ void OrderBook::matchOrder()
 
         if (priceOfBid < priceOfAsk)
         {
-            std::cout << "No more matching orders.\n";
+            // Disable during synthetic testing to avoid excessive console output
+            // std::cout << "No more matching orders.\n";
             break;
         }
 
@@ -52,7 +55,17 @@ void OrderBook::matchOrder()
 
         int tradeQuantity = std::min(buyOrder.quantity, sellOrder.quantity); // actual shares traded = smaller quantity between buyer and seller
 
-        std::cout << "Buyer " << buyOrder.id << " bought " << tradeQuantity << " shares from seller " << sellOrder.id << " at " << priceOfAsk << "\n";
+        // Enable this when manually verifying trade execution
+        /*
+        std::cout << "Buyer " << buyOrder.id
+                  << " bought "
+                  << tradeQuantity
+                  << " shares from seller "
+                  << sellOrder.id
+                  << " at "
+                  << priceOfAsk
+                  << "\n";
+        */
 
         buyOrder.quantity -= tradeQuantity;
         sellOrder.quantity -= tradeQuantity; // reduce remaining quantities after executing the trade
@@ -62,23 +75,27 @@ void OrderBook::matchOrder()
             // we pop that Order from the bestBid, as now the order is executed
             (bestBid->second).pop_front();
         }
+
         if (sellOrder.quantity == 0)
         {
             // we pop that Order from the bestAsk, as now the order is exceuted
             (bestAsk->second).pop_front();
         }
+
         // check if the list is empty
         if (bestBid->second.empty())
         {
             bids.erase(bestBid);
         }
+
         if (bestAsk->second.empty())
         {
             asks.erase(bestAsk);
         }
     }
 
-    printBook();
+    // Disable during synthetic testing
+    // printBook();
 }
 
 void OrderBook::cancelOrder(int orderId)

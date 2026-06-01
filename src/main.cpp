@@ -1,62 +1,46 @@
 #include <iostream>
+#include <random>
+
 #include "order.h"
 #include "orderbook.h"
 
 int main()
 {
-    OrderBook o1;
+    OrderBook book;
 
-    // Buyer wants 50 shares at price 100
-    Order buyOrder1;
-    buyOrder1.id = 1;
-    buyOrder1.price = 100;
-    buyOrder1.quantity = 50;
-    buyOrder1.side = 'B';
+    // Random number setup
+    std::random_device rd;
+    std::mt19937 gen(rd());
 
-    // Seller #1 sells 10 shares at 90
-    Order sellOrder1;
-    sellOrder1.id = 2;
-    sellOrder1.price = 90;
-    sellOrder1.quantity = 10;
-    sellOrder1.side = 'S';
+    // Synthetic workload configuration
+    std::uniform_int_distribution<> priceDist(70, 100);
+    std::uniform_int_distribution<> qtyDist(1, 100);
+    std::uniform_int_distribution<> sideDist(0, 1);
 
-    // Seller #2 sells 20 shares at 95
-    Order sellOrder2;
-    sellOrder2.id = 3;
-    sellOrder2.price = 95;
-    sellOrder2.quantity = 20;
-    sellOrder2.side = 'S';
+    const int NUM_ORDERS = 100000;
 
-    // Seller #3 sells 15 shares at 100
-    Order sellOrder3;
-    sellOrder3.id = 4;
-    sellOrder3.price = 100;
-    sellOrder3.quantity = 15;
-    sellOrder3.side = 'S';
+    // Generate random orders and feed them into the book
+    for (int i = 1; i <= NUM_ORDERS; i++)
+    {
+        Order order;
 
-    // This one should NOT trade
-    // because ask price > best bid
-    Order sellOrder4;
-    sellOrder4.id = 5;
-    sellOrder4.price = 120;
-    sellOrder4.quantity = 100;
-    sellOrder4.side = 'S';
+        // Sequential IDs keep every order unique
+        order.id = i;
 
-    o1.addOrder(buyOrder1);
+        // Random order attributes
+        order.price = priceDist(gen);
+        order.quantity = qtyDist(gen);
+        order.side = sideDist(gen) ? 'B' : 'S';
 
-    o1.addOrder(sellOrder1);
-    o1.addOrder(sellOrder2);
-    o1.addOrder(sellOrder3);
-    o1.addOrder(sellOrder4);
+        // Add incoming order to the book
+        book.addOrder(order);
 
-    std::cout << "INITIAL ORDERBOOK\n";
-    o1.printBook();
-
-    std::cout << "\nMATCHING ORDERS\n";
-    o1.matchOrder();
+        // Attempt matching immediately after arrival
+        book.matchOrder();
+    }
 
     std::cout << "\nFINAL ORDERBOOK\n";
-    o1.printBook();
+    book.printBook();
 
     return 0;
 }
