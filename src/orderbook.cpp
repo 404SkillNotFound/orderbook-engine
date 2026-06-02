@@ -118,6 +118,24 @@ void OrderBook::cancelOrder(int orderId)
             }
         }
     }
+    for (auto &[price, orders] : asks)
+    {
+        for (auto it = orders.begin(); it != orders.end(); ++it)
+        {
+            if (it->id == orderId)
+            {
+                orders.erase(it);
+
+                if (orders.empty())
+                {
+                    asks.erase(price);
+                }
+
+                std::cout << "Cancelled order " << orderId << "\n";
+                return;
+            }
+        }
+    }
 
     std::cout << "Order " << orderId << " not found\n";
 }
