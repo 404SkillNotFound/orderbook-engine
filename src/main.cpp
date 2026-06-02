@@ -1,3 +1,4 @@
+#include <chrono>
 #include <iostream>
 #include <random>
 
@@ -19,6 +20,11 @@ int main()
 
     const int NUM_ORDERS = 100000;
 
+    auto totalStart = std::chrono::high_resolution_clock::now();
+
+    long long addOrderTime = 0;
+    long long matchOrderTime = 0;
+
     // Generate random orders and feed them into the book
     for (int i = 1; i <= NUM_ORDERS; i++)
     {
@@ -32,12 +38,55 @@ int main()
         order.quantity = qtyDist(gen);
         order.side = sideDist(gen) ? 'B' : 'S';
 
+        auto addStart = std::chrono::high_resolution_clock::now();
+
         // Add incoming order to the book
         book.addOrder(order);
 
+        auto addEnd = std::chrono::high_resolution_clock::now();
+
+        addOrderTime +=
+            std::chrono::duration_cast<std::chrono::nanoseconds>(
+                addEnd - addStart)
+                .count();
+
+        auto matchStart = std::chrono::high_resolution_clock::now();
+
         // Attempt matching immediately after arrival
         book.matchOrder();
+
+        auto matchEnd = std::chrono::high_resolution_clock::now();
+
+        matchOrderTime +=
+            std::chrono::duration_cast<std::chrono::nanoseconds>(
+                matchEnd - matchStart)
+                .count();
     }
+
+    auto totalEnd = std::chrono::high_resolution_clock::now();
+
+    auto totalTime =
+        std::chrono::duration_cast<std::chrono::milliseconds>(
+            totalEnd - totalStart)
+            .count();
+
+    std::cout << "\n===== BENCHMARK RESULTS =====\n";
+
+    std::cout << "Orders Processed: "
+              << NUM_ORDERS
+              << "\n";
+
+    std::cout << "Total Runtime: "
+              << totalTime
+              << " ms\n";
+
+    std::cout << "addOrder() Time: "
+              << addOrderTime / 1000000.0
+              << " ms\n";
+
+    std::cout << "matchOrder() Time: "
+              << matchOrderTime / 1000000.0
+              << " ms\n";
 
     std::cout << "\nFINAL ORDERBOOK\n";
     book.printBook();
